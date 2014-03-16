@@ -1,11 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DemoProject.Model.Enums;
 
 namespace DemoProject.Model
 {
-    using DemoProject.Model.Enums;
-
+    [Table("Metadata")]
     public class Metadata
     {
         [Key]
@@ -15,7 +15,7 @@ namespace DemoProject.Model
         [MaxLength(256)]
         public string FileName { get; set; }
 
-        public DateTime At { get; set; }
+        public DateTime AtUtc { get; set; }
 
         public string ProcessingResult { get; set; }
 

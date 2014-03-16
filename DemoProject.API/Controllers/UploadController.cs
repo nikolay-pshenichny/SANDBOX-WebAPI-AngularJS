@@ -74,7 +74,7 @@ namespace DemoProject.API.Controllers
                         new Metadata
                             {
                                 FileName = content.Headers.ContentDisposition.FileName,
-                                At = DateTime.UtcNow,
+                                AtUtc = DateTime.UtcNow,
                                 ProcessingResult = processingResult,
                                 FileStorageUid = fileUidOnStorage,
                                 ChecksumType = this.ChecksumCalculator.ChecksumType,

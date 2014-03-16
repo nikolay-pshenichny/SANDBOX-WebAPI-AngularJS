@@ -12,7 +12,7 @@ namespace DemoProject.API.Models
 
         public string FileName { get; set; }
 
-        public DateTime At { get; set; }
+        public DateTime AtUtc { get; set; }
 
         public string ProcessingResult { get; set; }
 
@@ -22,7 +22,7 @@ namespace DemoProject.API.Models
             {
                 Id = metadata.Id,
                 FileName = metadata.FileName,
-                At = metadata.At,
+                AtUtc = metadata.AtUtc,
                 ProcessingResult = metadata.ProcessingResult
             };
         }

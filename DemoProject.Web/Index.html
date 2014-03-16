@@ -48,7 +48,7 @@
                         <tr>
                             <th>Id</th>
                             <th>File Name</th>
-                            <th>At</th>
+                            <th>At (Utc)</th>
                             <th>Longest text line</th>
                             <th>Actions</th>
                         </tr>
@@ -57,7 +57,7 @@
                         <tr data-ng-repeat="metadata in metadataList">
                             <td>{{ metadata.Id }}</td>
                             <td>{{ metadata.FileName }}</td>
-                            <td>{{ metadata.At }}</td>
+                            <td>{{ metadata.AtUtc | date:dateFormat }}</td>
                             <td>{{ metadata.ProcessingResult}}</td>
                             <td>
                                 <button type="button" class="btn-link" data-ng-click="removeMetadata(metadata)">remove</button>

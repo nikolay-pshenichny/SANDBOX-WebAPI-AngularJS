@@ -3,6 +3,7 @@
 var demoApp = angular.module("demoApp", ["angularFileUpload"]);
 
 demoApp.controller("metadataController", function ($scope, $http) {
+    $scope.dateFormat = "yyyy-MM-dd HH:mm:ss Z";
     $scope.metadataList = [];
 
     $scope.loadData = function () {
