@@ -1,0 +1,1 @@
+﻿This project contains all common functionality for the projects in the solution

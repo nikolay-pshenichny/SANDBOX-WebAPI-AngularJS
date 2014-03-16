@@ -1,0 +1,93 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+
+    <title>Uploads Manager</title>
+
+    <link rel="stylesheet" href="content/bootstrap.css">
+</head>
+
+<body data-ng-app="demoApp">
+    <div class="well well-sm">
+
+        <div data-ng-controller="uploadController">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Upload</div>
+                <div class="panel-body">
+                    <p data-ng-show="files.length == 0">Please select files for upload</p>
+                    <p data-ng-hide="files.length == 0">Selected files:</p>
+                    <ul>
+                        <li data-ng-repeat="file in files">
+                            {{ file.name }}
+                            <button type="button" class="btn-link" data-ng-hide="uploading" data-ng-click="removeFileFromUploadsList(file)">remove</button>
+                            <span data-ng-show="uploading">{{ file.uploadProgress }}%</span>
+                        </li>
+                    </ul>
+
+                    <input id="FileSelectDialog" type="file" data-ng-file-select="onFileSelect($files)" multiple style="display: none;" accept="text/plain" />
+                    <button type="button" class="btn btn-primary" data-ng-click="openFileSelectDialog()">Browse...</button>
+                    <button type="button" class="btn btn-success" data-ng-click="uploadSelectedFiles()" data-ng-hide="files.length == 0">Submit</button>
+                </div>
+            </div>
+        </div>
+
+        <div data-ng-controller="metadataController">
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Uploaded files
+                    <button id="ReloadData" type="button" class="btn btn-success btn-xs pull-right" data-ng-click="loadData()">
+                        <span class="glyphicon glyphicon-refresh"></span>
+                        <span>Reload</span>
+                    </button>
+                </div>
+
+                <table class="table table-striped table-condensed table-hover">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>File Name</th>
+                            <th>At</th>
+                            <th>Longest text line</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-ng-repeat="metadata in metadataList">
+                            <td>{{ metadata.Id }}</td>
+                            <td>{{ metadata.FileName }}</td>
+                            <td>{{ metadata.At }}</td>
+                            <td>{{ metadata.ProcessingResult}}</td>
+                            <td>
+                                <button type="button" class="btn-link" data-ng-click="removeMetadata(metadata)">remove</button>
+                                <button type="button" class="btn-link" data-ng-click="downloadFile(metadata)">download</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script src="scripts/angular-file-upload-shim.js"></script>
+
+    <script src="scripts/jquery-1.9.1.js"></script>
+
+    <script src="scripts/angular.js"></script>
+    <script src="scripts/angular-resource.js"></script>
+    <script src="scripts/angular-route.js"></script>
+    <script src="scripts/angular-animate.js"></script>
+
+    <script src="scripts/bootstrap.js"></script>
+
+    <script src="scripts/angular-file-upload.js"></script>
+    <script src="scripts/ui-bootstrap-0.10.0.js"></script>
+
+    <script src="scripts/app/config.js"></script>
+    <script src="scripts/app/controllers.js"></script>
+
+</body>
+</html>
