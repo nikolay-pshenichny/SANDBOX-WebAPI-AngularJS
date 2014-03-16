@@ -2,6 +2,8 @@
 
 Simple Web Api & AngularJS application.
 
+
+
 ## Project structure
 
 - DemoProject.API - Web Api
@@ -12,7 +14,7 @@ Simple Web Api & AngularJS application.
 
 
 
-## Server-side
+## Server-side tools
 
 - ASP.NET Web API
 - Entity Framework (Code First)
@@ -22,9 +24,9 @@ __DemoProject.API__ is configured to use Local IIS server. Project URL is set to
 
 
 
-## Client-Side
+## Client-Side tools
 
-- AngularJs
+- AngularJS
 - Bootstrap
 
 __DemoProject.Web__ is configured to use Loca IIS server. Project URL is set to _http://localhost/web_  
@@ -34,18 +36,24 @@ __ApiUrl__ configuration is located in _DemoProject.Web/scripts/app/config.js_
 
 ## How To
 
+
+
 ### Configuration and Compilation
+
 - Change Database connection string (DemoProjectContext) in _DemoProject.API/web.config_
 - Change Storage location (StoragePath) in _DemoProject.API/web.config_
 - Compile the solution
 - Ensure that Virtual Directories were created in IIS ("Default Web Site\api" and "Default Web Site\web")
 
 
-### Testing. UI
 
-Use [http://localhost/web]
+### Testing. UI.
 
-### Testing. Fiddler
+Use http://localhost/web
+
+
+
+### Testing. Fiddler.
 
 Use __Composer__ tab to create requests to endpoints:
 
@@ -63,7 +71,9 @@ __Downloads__
 
  - http://localhost/api/download/{id} (GET)
 
-### Testing. CURL
+
+
+### Testing. CURL.
 
 GET files metadata
 
@@ -72,6 +82,7 @@ GET files metadata
 POST a file (upload a file)
 
 >curl.exe -X POST -F file=@TestFile.txt http://localhost/api/upload
+
 
 
 ## TODO
