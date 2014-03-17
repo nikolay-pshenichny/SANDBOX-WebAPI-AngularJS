@@ -29,7 +29,7 @@ __DemoProject.API__ is configured to use Local IIS server. Project URL is set to
 - AngularJS
 - Bootstrap
 
-__DemoProject.Web__ is configured to use Loca IIS server. Project URL is set to [http://localhost/web](http://localhost/web)  
+__DemoProject.Web__ is configured to use Local IIS server. Project URL is set to [http://localhost/web](http://localhost/web)  
 __ApiUrl__ configuration is located in _DemoProject.Web/scripts/app/config.js_
 
 
@@ -63,11 +63,11 @@ __NOTE:__ To get information about available endpoint visit [http://localhost/ap
 
 ### Testing. CURL.
 
-GET files metadata
+GET files metadata:
 
 >curl.exe http://localhost/api/metadata
 
-POST a file (upload a file)
+POST a file (upload a file):
 
 >curl.exe -X POST -F file=@TestFile.txt http://localhost/api/upload
 
