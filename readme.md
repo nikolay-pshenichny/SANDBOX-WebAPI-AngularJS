@@ -55,21 +55,9 @@ Use http://localhost/web
 
 ### Testing. Fiddler.
 
-Use __Composer__ tab to create requests to endpoints:
+Use __Composer__ tab to create requests to endpoints.  
 
-__Metadata__
-
- - http://localhost/api/metadata (GET)
- - http://localhost/api/metadata/id (GET)
- - http://localhost/api/metadata/id (DELETE)
-
-__Uploads__
-
- - http://localhost/api/upload (POST, multi-part content is expected)
-
-__Downloads__
-
- - http://localhost/api/download/{id} (GET)
+__NOTE:__ To get information about available endpoint visit http://localhost/api/Help
 
 
 
@@ -82,6 +70,8 @@ GET files metadata
 POST a file (upload a file)
 
 >curl.exe -X POST -F file=@TestFile.txt http://localhost/api/upload
+
+__NOTE:__ To get information about available endpoint visit http://localhost/api/Help
 
 
 
