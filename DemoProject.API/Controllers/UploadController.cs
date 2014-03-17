@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 
+using DemoProject.API.ActionResults;
 using DemoProject.API.Models;
 using DemoProject.API.Repositories;
 using DemoProject.Common.Windsor;
@@ -17,8 +18,9 @@ namespace DemoProject.API.Controllers
     using DemoProject.API.Processors;
 
     /// <summary>
-    /// This API Controller is responsible for Uploads.
-    /// It also performs file processing and metadata creation when files are being uploaded.
+    /// <para>This API Controller handles file Uploads.</para>
+    /// <para>All uploded files will stored on a storage and processed. All collected file 
+    /// metadata, including processing results, will be stored in DB</para>
     /// </summary>
     public class UploadController : ApiController
     {
@@ -36,15 +38,15 @@ namespace DemoProject.API.Controllers
 
         /// <summary>
         /// Main Handler for all uploads.
-        /// It expects multipart data
+        /// It expects multipart data and accepts only Text files
         /// </summary>
-        /// <returns>File metadata for uploaded files</returns>
+        /// <returns>Collected file metadata for the uploaded files</returns>
         [HttpPost]
-        public async Task<HttpResponseMessage> Post()
+        public async Task<IHttpActionResult> Post()
         {
             if (!this.Request.Content.IsMimeMultipartContent())
             {
-                return new HttpResponseMessage(HttpStatusCode.UnsupportedMediaType);
+                return this.StatusCode(HttpStatusCode.UnsupportedMediaType);
             }
 
             var memoryStreamProvider = new MultipartMemoryStreamProvider();
@@ -85,8 +87,7 @@ namespace DemoProject.API.Controllers
             }
 
             // Return file metadata for all uploaded files
-            var response = this.Request.CreateResponse(results);
-            return response;
+            return new GenericValueResult<List<MetadataInfo>>(results, this.Request);
         }
     }
 }

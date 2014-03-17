@@ -4,12 +4,13 @@ using System.Web.Http;
 using DemoProject.API.Models;
 using DemoProject.API.Repositories;
 using DemoProject.Common.Windsor;
+using DemoProject.API.ActionResults;
 
 namespace DemoProject.API.Controllers
 {
     /// <summary>
-    /// This API Controller is responsible for Metadata manipulations.
-    /// (CRUD, but without Create and Update. Uploads should be used to create a new metadata)
+    /// <para>This API Controller handles all file Metadata manipulations.</para>
+    /// <para>File metadata information includes: Checksum, FileName, DateTime when uploaded and Processing Results.</para>
     /// </summary>
     public class MetadataController : ApiController
     {
@@ -21,33 +22,43 @@ namespace DemoProject.API.Controllers
 
         /// <summary>
         /// Returns all available file metadata, including processing results
-        /// which were calculated during Upload
+        /// which were calculated during file Upload operation.
         /// </summary>
-        /// <returns>File metadata</returns>
+        /// <returns>List of MetadataInfo objects (IEnumerable&lt;MetadataInfo&gt;)</returns>
         [HttpGet]
-        public IEnumerable<MetadataInfo> Get()
+        public IHttpActionResult Get()
         {
-            return this.MetadataRepository.GetAll().AsEnumerable().Select(MetadataInfo.FromMetadata);
+            IEnumerable<MetadataInfo> result = this.MetadataRepository.GetAll().AsEnumerable().Select(MetadataInfo.FromMetadata);
+            return new GenericValueResult<IEnumerable<MetadataInfo>>(result, this.Request);
         }
 
         /// <summary>
-        /// Returns file metadata with the particular ID, or nothing if not found
+        /// Returns a file metadata object (MetadataInfo) that corresponds to the requested ID.
         /// </summary>
         /// <param name="id">Metadata Id</param>
-        /// <returns>File metadata</returns>
+        /// <returns>Single file metadata object (<see cref="DemoProject.API.Models.MetadataInfo"/>) or NotFound()</returns>
         [HttpGet]
-        public MetadataInfo Get(int id)
+        public IHttpActionResult Get(int id)
         {
             var metadata = this.MetadataRepository.GetAll().FirstOrDefault(x => x.Id == id);
-            return metadata != null ? MetadataInfo.FromMetadata(metadata) : null;
+            if (metadata != null)
+            {
+                return new GenericValueResult<MetadataInfo>(MetadataInfo.FromMetadata(metadata), this.Request);
+            }
+            else
+            {
+                return this.NotFound();
+            }
+
         }
 
         /// <summary>
-        /// Deletes the metadata from the database and removes associates with it file from Storage
+        /// Deletes the file metadata from the database and removes the file associates with it from a Storage
         /// </summary>
         /// <param name="id">Metadata Id</param>
+        /// <returns>OK if metadata was deleted or NotFound if it was not found</returns>
         [HttpDelete]
-        public void Delete(int id)
+        public IHttpActionResult Delete(int id)
         {
             var metadata = this.MetadataRepository.GetAll().FirstOrDefault(x => x.Id == id);
             if (metadata != null)
@@ -55,7 +66,11 @@ namespace DemoProject.API.Controllers
                 this.StorageRepository.Delete(metadata.FileStorageUid);
                 
                 this.MetadataRepository.Delete(id);
+
+                return this.Ok();
             }
+
+            return this.NotFound();
         }
     }
 }

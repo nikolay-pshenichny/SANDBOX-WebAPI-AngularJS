@@ -1,16 +1,15 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
+using DemoProject.API.ActionResults;
 using DemoProject.API.Repositories;
 using DemoProject.Common.Windsor;
 
 namespace DemoProject.API.Controllers
 {
     /// <summary>
-    /// This API Controller is responsible for Downloads
+    /// This API Controller handles file Downloads.
     /// </summary>
     public class DownloadController : ApiController
     {
@@ -20,8 +19,13 @@ namespace DemoProject.API.Controllers
         [Inject]
         public IStorageRepository StorageRepository { private get; set; }
 
+        /// <summary>
+        /// Returns a file associated with the provided Metadata.Id.
+        /// </summary>
+        /// <param name="id">Metadata.Id associated with the file that should be downloaded</param>
+        /// <returns>File content as an attachment</returns>
         [HttpGet]
-        public HttpResponseMessage Get(int id)
+        public IHttpActionResult Get(int id)
         {
             // Search for the requested metadata Id
             var metadata = this.MetadataRepository.GetAll().FirstOrDefault(x => x.Id == id);
@@ -32,19 +36,11 @@ namespace DemoProject.API.Controllers
                 Stream stream;
                 if (this.StorageRepository.Get(metadata.FileStorageUid, out stream))
                 {
-                    var response = this.Request.CreateResponse();
-                    response.Content = new StreamContent(stream);
-                    response.Content.Headers.ContentDisposition =
-                        new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment")
-                        {
-                            FileName = metadata.FileName
-                        };
-
-                    return response;
+                    return new Attachment(stream, metadata.FileName, this.Request);
                 }
             }
 
-            return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            return this.NotFound();
         }
     }
 }

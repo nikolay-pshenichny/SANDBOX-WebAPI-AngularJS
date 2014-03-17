@@ -5,9 +5,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web.Http;
 
+using DemoProject.API.ActionResults;
 using DemoProject.API.Calculators;
 using DemoProject.API.Controllers;
+using DemoProject.API.Models;
 using DemoProject.API.Processors;
 using DemoProject.API.Repositories;
 
@@ -40,11 +43,13 @@ namespace DemoProject.API.Tests.Controllers
             controller.Request.Content = new StringContent(string.Empty);
 
             // Act
-            Task<HttpResponseMessage> task = controller.Post();
+            Task<IHttpActionResult> task = controller.Post();
             task.Wait();
 
             // Assert
-            task.Result.StatusCode.Should().Be(HttpStatusCode.UnsupportedMediaType);
+            System.Web.Http.Results.StatusCodeResult result = task.Result as System.Web.Http.Results.StatusCodeResult;
+            result.Should().NotBeNull("Wrong data type was returned from the controller");
+            result.StatusCode.Should().Be(HttpStatusCode.UnsupportedMediaType);
         }
 
         [TestMethod]
@@ -58,10 +63,12 @@ namespace DemoProject.API.Tests.Controllers
             var controller = this.ConfigureController(out storageRepositoryMock, out fileProcessorMock, out checksumCalculatorMock, out metadataRepositoryMock);
 
             // Act
-            Task<HttpResponseMessage> task = controller.Post();
+            Task<IHttpActionResult> task = controller.Post();
             task.Wait();
 
             // Assert
+            GenericValueResult<List<MetadataInfo>> result = task.Result as GenericValueResult<List<MetadataInfo>>;
+            result.Should().NotBeNull("Wrong data type was returned from the controller");
             storageRepositoryMock.Verify(x => x.Put(It.IsAny<Stream>(), out this.storageUid), Times.Once, "Storage should be accessed only once");
         }
 
@@ -76,10 +83,12 @@ namespace DemoProject.API.Tests.Controllers
             var controller = this.ConfigureController(out storageRepositoryMock, out fileProcessorMock, out checksumCalculatorMock, out metadataRepositoryMock);
 
             // Act
-            Task<HttpResponseMessage> task = controller.Post();
+            Task<IHttpActionResult> task = controller.Post();
             task.Wait();
 
             // Assert
+            GenericValueResult<List<MetadataInfo>> result = task.Result as GenericValueResult<List<MetadataInfo>>;
+            result.Should().NotBeNull("Wrong data type was returned from the controller");
             fileProcessorMock.Verify(x => x.Process(It.IsAny<Stream>()), Times.Once, "File processing should be called exactly once");
         }
 
@@ -94,10 +103,12 @@ namespace DemoProject.API.Tests.Controllers
             var controller = this.ConfigureController(out storageRepositoryMock, out fileProcessorMock, out checksumCalculatorMock, out metadataRepositoryMock);
 
             // Act
-            Task<HttpResponseMessage> task = controller.Post();
+            Task<IHttpActionResult> task = controller.Post();
             task.Wait();
 
             // Assert
+            GenericValueResult<List<MetadataInfo>> result = task.Result as GenericValueResult<List<MetadataInfo>>;
+            result.Should().NotBeNull("Wrong data type was returned from the controller");
             checksumCalculatorMock.Verify(x => x.Calculate(It.IsAny<Stream>()), Times.Once, "Checksum calculation should be called exactly once");
         }
 
@@ -112,10 +123,12 @@ namespace DemoProject.API.Tests.Controllers
             var controller = this.ConfigureController(out storageRepositoryMock, out fileProcessorMock, out checksumCalculatorMock, out metadataRepositoryMock);
 
             // Act
-            Task<HttpResponseMessage> task = controller.Post();
+            Task<IHttpActionResult> task = controller.Post();
             task.Wait();
 
             // Assert
+            GenericValueResult<List<MetadataInfo>> result = task.Result as GenericValueResult<List<MetadataInfo>>;
+            result.Should().NotBeNull("Wrong data type was returned from the controller");
             metadataRepositoryMock.Verify(x => x.Save(It.IsAny<Model.Metadata>()), Times.Once);
         }
 
@@ -130,14 +143,17 @@ namespace DemoProject.API.Tests.Controllers
             var controller = this.ConfigureController(out storageRepositoryMock, out fileProcessorMock, out checksumCalculatorMock, out metadataRepositoryMock);
 
             // Act
-            Task<HttpResponseMessage> task = controller.Post();
+            Task<IHttpActionResult> task = controller.Post();
             task.Wait();
 
             // Assert
-            task.Result.StatusCode.Should().Be(HttpStatusCode.OK);
-            var t = task.Result.Content.As<ObjectContent<List<Models.MetadataInfo>>>();
-            t.Value.Should().BeOfType<List<Models.MetadataInfo>>();
-            var informationFromService = (t.Value as List<Models.MetadataInfo>).First();
+            GenericValueResult<List<MetadataInfo>> result = task.Result as GenericValueResult<List<MetadataInfo>>;
+            result.Should().NotBeNull("Wrong data type was returned from the controller");
+            
+            var t = result.Value as IEnumerable<Models.MetadataInfo>;
+            t.Should().NotBeNull("Wrong data type was returned as a result of controller's work");
+
+            var informationFromService = t.First();
             informationFromService.Id.Should().Be(ExpectedId);
             informationFromService.ProcessingResult.Should().Be(this.fileProcessingResult.ToString());
         }

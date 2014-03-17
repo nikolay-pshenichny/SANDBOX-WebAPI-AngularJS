@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 
+using DemoProject.API.ActionResults;
 using DemoProject.API.Controllers;
 using DemoProject.API.Repositories;
 
@@ -32,10 +32,11 @@ namespace DemoProject.API.Tests.Controllers
             DownloadController controller = this.PrepareController(stream, out metadataRepositoryMock, out storageRepositoryMock);
 
             // Act
-            var result = controller.Get(default(int));
+            var actionResult = controller.Get(default(int));
 
             // Assert
-            result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+            System.Web.Http.Results.NotFoundResult result = actionResult as System.Web.Http.Results.NotFoundResult;
+            result.Should().NotBeNull("Wrong data type was returned from the controller");
             metadataRepositoryMock.VerifyAll();
             storageRepositoryMock.Verify(x => x.Get(It.IsAny<Guid>(), out stream), Times.Never, "If ID was not found, Storage should not be accessed");
         }
@@ -51,11 +52,13 @@ namespace DemoProject.API.Tests.Controllers
             DownloadController controller = this.PrepareController(stream, out metadataRepositoryMock, out storageRepositoryMock);
 
             // Act
-            var result = controller.Get(TestId);
+            var actionResult = controller.Get(TestId);
 
             // Assert
             //TODO: check content 
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
+            Attachment result = actionResult as Attachment;
+            result.Should().NotBeNull("Wrong data type was returned from the controller");
+            result.Stream.Should().NotBeNull();
             metadataRepositoryMock.VerifyAll();
             storageRepositoryMock.Verify(x => x.Get(It.IsAny<Guid>(), out stream), Times.Once, "Storage should be accessed only once");
         }
