@@ -9,7 +9,7 @@ using DemoProject.Common.Windsor;
 namespace DemoProject.API.Controllers
 {
     /// <summary>
-    /// This API Controller handles file Downloads.
+    /// This API Controller handles file Downloads. <para>Metadata.Id is required in order to download a file.</para>
     /// </summary>
     public class DownloadController : ApiController
     {
@@ -20,7 +20,7 @@ namespace DemoProject.API.Controllers
         public IStorageRepository StorageRepository { private get; set; }
 
         /// <summary>
-        /// Returns a file associated with the provided Metadata.Id.
+        /// Returns a file associated with the provided Metadata.Id (<see cref="DemoProject.API.Models.MetadataInfo"/>) as a Content of the Request.
         /// </summary>
         /// <param name="id">Metadata.Id associated with the file that should be downloaded</param>
         /// <returns>File content as an attachment</returns>

@@ -20,7 +20,7 @@ Simple Web Api & AngularJS application.
 - Entity Framework (Code First)
 - Castle Windsor
 
-__DemoProject.API__ is configured to use Local IIS server. Project URL is set to _http://localhost/api_
+__DemoProject.API__ is configured to use Local IIS server. Project URL is set to [http://localhost/api](http://localhost/api)
 
 
 
@@ -29,7 +29,7 @@ __DemoProject.API__ is configured to use Local IIS server. Project URL is set to
 - AngularJS
 - Bootstrap
 
-__DemoProject.Web__ is configured to use Loca IIS server. Project URL is set to _http://localhost/web_  
+__DemoProject.Web__ is configured to use Loca IIS server. Project URL is set to [http://localhost/web](http://localhost/web)  
 __ApiUrl__ configuration is located in _DemoProject.Web/scripts/app/config.js_
 
 
@@ -49,7 +49,7 @@ __ApiUrl__ configuration is located in _DemoProject.Web/scripts/app/config.js_
 
 ### Testing. UI.
 
-Use http://localhost/web
+Use [http://localhost/web](http://localhost/web)
 
 
 
@@ -57,7 +57,7 @@ Use http://localhost/web
 
 Use __Composer__ tab to create requests to endpoints.  
 
-__NOTE:__ To get information about available endpoint visit http://localhost/api/Help
+__NOTE:__ To get information about available endpoint visit [http://localhost/api/Help](http://localhost/api/Help)
 
 
 
@@ -71,7 +71,7 @@ POST a file (upload a file)
 
 >curl.exe -X POST -F file=@TestFile.txt http://localhost/api/upload
 
-__NOTE:__ To get information about available endpoint visit http://localhost/api/Help
+__NOTE:__ To get information about available endpoint visit [http://localhost/api/Help](http://localhost/api/Help)
 
 
 

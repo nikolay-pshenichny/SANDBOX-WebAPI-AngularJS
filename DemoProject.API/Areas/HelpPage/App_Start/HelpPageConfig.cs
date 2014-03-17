@@ -68,6 +68,24 @@ namespace DemoProject.API.Areas.HelpPage
             //// Uncomment the following to use "1234" directly as the request sample for media type "text/plain" on the controller named "Values"
             //// and action named "Put".
             //config.SetSampleRequest("1234", new MediaTypeHeaderValue("text/plain"), "Values", "Put");
+            config.SetSampleRequest(@"POST http://localhost/api/upload HTTP/1.1
+Content-Type: multipart/form-data; boundary=-------------------------acebdf13572468
+User-Agent: Fiddler
+Host: localhost
+Content-Length: 462
+
+---------------------------acebdf13572468
+Content-Disposition: form-data; name=""fieldNameHere""; filename=""TestFile.txt""
+Content-Type: text/plain
+
+line1
+line 2 - namespace DemoProject
+line3
+line4
+line 5 - 555555555555555555555555555555555555
+line 6 - 666666666666 666666666666 666666666666 666666666666 666666666666 666666666666 666666666666 666666666666 666666666666 666666666666 666666666666 666666666666 
+---------------------------acebdf13572468--
+", new MediaTypeHeaderValue("text/plain"), "Upload", "Post");
 
             //// Uncomment the following to use the image on "../images/aspNetHome.png" directly as the response sample for media type "image/png"
             //// on the controller named "Values" and action named "Get" with parameter "id".
@@ -80,6 +98,10 @@ namespace DemoProject.API.Areas.HelpPage
             //// Uncomment the following to correct the sample response when the action returns an HttpResponseMessage with ObjectContent<string>.
             //// The sample will be generated as if the controller named "Values" and action named "Post" were returning a string.
             //config.SetActualResponseType(typeof(string), "Values", "Post");
+
+            config.SetActualResponseType(typeof(IEnumerable<DemoProject.API.Models.MetadataInfo>), "Metadata", "Get");
+            config.SetActualResponseType(typeof(DemoProject.API.Models.MetadataInfo), "Metadata", "Get", "id");
+            config.SetActualResponseType(typeof(IEnumerable<DemoProject.API.Models.MetadataInfo>), "Upload", "Post");
         }
 
 #if Handle_PageResultOfT

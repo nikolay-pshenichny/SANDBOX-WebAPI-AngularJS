@@ -37,10 +37,13 @@ namespace DemoProject.API.Controllers
         public IChecksumCalculator ChecksumCalculator { private get; set; }
 
         /// <summary>
-        /// Main Handler for all uploads.
-        /// It expects multipart data and accepts only Text files
+        /// <para>Main Handler for all uploads.</para>
+        /// It expects multipart data and accepts only Text files.
         /// </summary>
-        /// <returns>Collected file metadata for the uploaded files</returns>
+        /// <returns><para>Collected file metadata (List&lt;MetadataInfo&gt;. <see cref="DemoProject.API.Models.MetadataInfo"/>) 
+        /// for the uploaded files if everything was uploaded correctly.</para>
+        /// <para>UnsupportedMediaType in case when content is not a multipart content</para>
+        /// </returns>
         [HttpPost]
         public async Task<IHttpActionResult> Post()
         {
