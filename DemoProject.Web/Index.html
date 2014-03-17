@@ -18,7 +18,7 @@
 
     <div class="well well-sm">
 
-        <div data-ng-controller="uploadController">
+        <div class="container" data-ng-controller="uploadController">
             <div class="panel panel-primary">
                 <div class="panel-heading">Upload</div>
                 <div class="panel-body">
@@ -39,7 +39,7 @@
             </div>
         </div>
 
-        <div data-ng-controller="metadataController">
+        <div class="container" data-ng-controller="metadataController">
 
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -77,6 +77,18 @@
             </div>
         </div>
 
+
+        <div class="container" data-ng-controller="messageLogController" style="display: none">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Log Messages
+                </div>
+                <div class="panel-body">
+                    <textarea class="form-control" rows="10" readonly data-ng-model="messages">
+                    </textarea>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="scripts/angular-file-upload-shim.js"></script>

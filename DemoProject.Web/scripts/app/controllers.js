@@ -2,6 +2,13 @@
 
 var demoApp = angular.module("demoApp", ["angularFileUpload"]);
 
+///////////////////////////////////////////////////////////////
+demoApp.controller("messageLogController", function ($scope) {
+    $scope.messages = "";
+});
+
+
+///////////////////////////////////////////////////////////////
 demoApp.controller("metadataController", function ($scope, $http) {
     $scope.dateFormat = "yyyy-MM-dd HH:mm:ss Z";
     $scope.metadataList = [];
@@ -28,6 +35,7 @@ demoApp.controller("metadataController", function ($scope, $http) {
     $scope.loadData();
 });
 
+///////////////////////////////////////////////////////////////
 demoApp.controller("uploadController", ["$scope", "$upload", function ($scope, $upload) {
     $scope.files = [];
     $scope.uploading = false;
@@ -67,12 +75,15 @@ demoApp.controller("uploadController", ["$scope", "$upload", function ($scope, $
                 console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
             }).success(function (data, status, headers, config) {
                 // file is uploaded successfully
-                console.log(data);
+                var jsonString = JSON.stringify(data);
+                console.log(jsonString);
+                
 
                 var index = $scope.files.indexOf(file);
                 $scope.files.splice(index, 1);
 
                 // todo. refresh data in the screen
+                $(document).trigger("LogMessageEvent");
             });
             //.error(...)
             //.then(success, error, progress); 
@@ -81,7 +92,7 @@ demoApp.controller("uploadController", ["$scope", "$upload", function ($scope, $
     };
 }]);
 
-
+///////////////////////////////////////////////////////////////
 $("#GetApiHelp").on("click", function () {
     console.log("Open API help ");
     window.open(configuration.apiUrl + "/Help", "_new");
