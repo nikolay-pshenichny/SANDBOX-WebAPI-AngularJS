@@ -15,9 +15,14 @@ namespace DemoProject.API.ActionResults
         private readonly T value;
         private readonly HttpRequestMessage request;
 
-        public GenericValueResult(T metadataInfo, HttpRequestMessage request)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GenericValueResult"/> class.
+        /// </summary>
+        /// <param name="value">Value, to return in Response</param>
+        /// <param name="request">Request, from which Response should be created</param>
+        public GenericValueResult(T value, HttpRequestMessage request)
         {
-            this.value = metadataInfo;
+            this.value = value;
             this.request = request;
         }
 

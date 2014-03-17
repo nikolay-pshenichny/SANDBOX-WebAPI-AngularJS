@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+
+using DemoProject.API.ActionResults;
 using DemoProject.API.Models;
 using DemoProject.API.Repositories;
 using DemoProject.Common.Windsor;
-using DemoProject.API.ActionResults;
 
 namespace DemoProject.API.Controllers
 {
@@ -45,11 +46,8 @@ namespace DemoProject.API.Controllers
             {
                 return new GenericValueResult<MetadataInfo>(MetadataInfo.FromMetadata(metadata), this.Request);
             }
-            else
-            {
-                return this.NotFound();
-            }
 
+            return this.NotFound();
         }
 
         /// <summary>

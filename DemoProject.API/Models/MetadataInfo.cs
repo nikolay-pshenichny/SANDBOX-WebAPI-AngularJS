@@ -10,8 +10,9 @@ namespace DemoProject.API.Models
     {
         /// <summary>
         /// Id of this metadata in the database or other metadata storage.
+        /// Can be Null in case when only ProcessingResult message is returned.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Name of a file
@@ -24,7 +25,7 @@ namespace DemoProject.API.Models
         public DateTime AtUtc { get; set; }
 
         /// <summary>
-        /// File processing result.
+        /// File processing result. Or other results (uploading results)
         /// </summary>
         public string ProcessingResult { get; set; }
 

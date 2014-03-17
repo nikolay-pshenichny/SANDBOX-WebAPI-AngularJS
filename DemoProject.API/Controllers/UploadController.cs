@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -24,6 +25,31 @@ namespace DemoProject.API.Controllers
     /// </summary>
     public class UploadController : ApiController
     {
+        private const char MediaTypeSeparator = ';';
+
+        /// <summary>
+        /// Gets message, that will be returned as the Processing Result in case if Content cannot be accepted.
+        /// This property is exposed to use in UnitTests
+        /// </summary>
+        public static string ContentTypeCannotBeAcceptedMessage
+        {
+            get
+            {
+                return Properties.Resources.ContentTypeCannotBeAccepted;
+            }
+        }
+
+        /// <summary>
+        /// Gets message, that will be returned as the Processing Result in case if Content-Type header is missing
+        /// </summary>
+        public static string ContentTypeHeaderIsMissingMessage
+        {
+            get
+            {
+                return Properties.Resources.ContentTypeHeaderIsMissing;
+            }
+        }
+
         [Inject]
         public IStorageRepository StorageRepository { private get; set; }
 
@@ -38,11 +64,12 @@ namespace DemoProject.API.Controllers
 
         /// <summary>
         /// <para>Main Handler for all uploads.</para>
-        /// It expects multipart data and accepts only Text files.
+        /// It expects multipart data and accepts only Text files (ContentType = test/plain).
         /// </summary>
         /// <returns><para>Collected file metadata (List&lt;MetadataInfo&gt;. <see cref="DemoProject.API.Models.MetadataInfo"/>) 
         /// for the uploaded files if everything was uploaded correctly.</para>
-        /// <para>UnsupportedMediaType in case when content is not a multipart content</para>
+        /// <para>UnsupportedMediaType in case when content is not a multipart content.</para>
+        /// <para>MetadataInfo.Id will be NULL for all content what was rejected. MetadataInfo.ProcessingMessage will contain a reason of rejection</para>
         /// </returns>
         [HttpPost]
         public async Task<IHttpActionResult> Post()
@@ -52,45 +79,88 @@ namespace DemoProject.API.Controllers
                 return this.StatusCode(HttpStatusCode.UnsupportedMediaType);
             }
 
-            var memoryStreamProvider = new MultipartMemoryStreamProvider();
-            await this.Request.Content.ReadAsMultipartAsync(memoryStreamProvider);
+            string[] acceptedContentTypesLoweredInCase =
+                Properties.Settings.Default.AcceptedContentTypes.ToLower().Split(MediaTypeSeparator);
 
-            List<MetadataInfo> results = new List<MetadataInfo>();
-            foreach (HttpContent content in memoryStreamProvider.Contents)
+            try
             {
-                // TODO: Validate received files here
-                Stream data = await content.ReadAsStreamAsync();
+                var memoryStreamProvider = new MultipartMemoryStreamProvider();
+                await this.Request.Content.ReadAsMultipartAsync(memoryStreamProvider);
 
-                // Put newly uploaded file on a storage. StorageRepository will return UID associated with the file.
-                Guid fileUidOnStorage;
-                this.StorageRepository.Put(data, out fileUidOnStorage);
+                List<MetadataInfo> results = new List<MetadataInfo>();
+                foreach (HttpContent content in memoryStreamProvider.Contents)
+                {
+                    string contentFileName = content.Headers.ContentDisposition.FileName;
+                    if (content.Headers.ContentType != null)
+                    {
+                        string[] contentMediaType = content.Headers.ContentType.MediaType.Split(MediaTypeSeparator);
+                        bool acceptThisContent =
+                            contentMediaType.Any(x => acceptedContentTypesLoweredInCase.Contains(x.ToLower()));
 
-                // Process newly uploaded file and get processing results
-                data.Position = 0;
-                string processingResult = this.FileProcessor.Process(data);
+                        if (acceptThisContent)
+                        {
+                            Stream data = await content.ReadAsStreamAsync();
 
-                // Calculate file's checksum
-                data.Position = 0;
-                string checksum = this.ChecksumCalculator.Calculate(data);
+                            // Put newly uploaded file on a storage. StorageRepository will return UID associated with the file.
+                            Guid fileUidOnStorage;
+                            this.StorageRepository.Put(data, out fileUidOnStorage);
 
-                // Prepare metadata object and save it.
-                var metadata =
-                    this.MetadataRepository.Save(
-                        new Metadata
+                            // Process newly uploaded file and get processing results
+                            data.Position = 0;
+                            string processingResult = this.FileProcessor.Process(data);
+
+                            // Calculate file's checksum
+                            data.Position = 0;
+                            string checksum = this.ChecksumCalculator.Calculate(data);
+
+                            // Prepare metadata object and save it.
+                            var metadata =
+                                this.MetadataRepository.Save(
+                                    new Metadata
+                                    {
+                                        FileName = contentFileName,
+                                        AtUtc = DateTime.UtcNow,
+                                        ProcessingResult = processingResult,
+                                        FileStorageUid = fileUidOnStorage,
+                                        ChecksumType = this.ChecksumCalculator.ChecksumType,
+                                        Checksum = checksum
+                                    });
+
+                            results.Add(MetadataInfo.FromMetadata(metadata));
+                        }
+                        else
+                        {
+                            // reject content
+                            results.Add(new MetadataInfo
                             {
-                                FileName = content.Headers.ContentDisposition.FileName,
+                                Id = null,
+                                FileName = contentFileName,
                                 AtUtc = DateTime.UtcNow,
-                                ProcessingResult = processingResult,
-                                FileStorageUid = fileUidOnStorage,
-                                ChecksumType = this.ChecksumCalculator.ChecksumType,
-                                Checksum = checksum
+                                ProcessingResult = ContentTypeCannotBeAcceptedMessage
                             });
+                        }
+                    }
+                    else
+                    {
+                        // no content-type header
+                        results.Add(new MetadataInfo
+                        {
+                            Id = null,
+                            FileName = contentFileName,
+                            AtUtc = DateTime.UtcNow,
+                            ProcessingResult = ContentTypeHeaderIsMissingMessage
+                        });
+                    }
+                }
 
-                results.Add(MetadataInfo.FromMetadata(metadata));
+                // Return file metadata for all uploaded files
+                return new GenericValueResult<List<MetadataInfo>>(results, this.Request);
             }
-
-            // Return file metadata for all uploaded files
-            return new GenericValueResult<List<MetadataInfo>>(results, this.Request);
+            catch (IOException)
+            {
+                // TODO: Log exceptions
+                return this.InternalServerError();
+            }
         }
     }
 }

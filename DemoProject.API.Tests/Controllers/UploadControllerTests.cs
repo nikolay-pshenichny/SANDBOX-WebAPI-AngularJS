@@ -158,6 +158,40 @@ namespace DemoProject.API.Tests.Controllers
             informationFromService.ProcessingResult.Should().Be(this.fileProcessingResult.ToString());
         }
 
+        [TestMethod]
+        public void Should_Accept_Only_Text_Content()
+        {
+            // Arrange
+            Mock<IStorageRepository> storageRepositoryMock;
+            Mock<IFileProcessor> fileProcessorMock;
+            Mock<IChecksumCalculator> checksumCalculatorMock;
+            Mock<IMetadataRepository> metadataRepositoryMock;
+            var controller = this.ConfigureController(out storageRepositoryMock, out fileProcessorMock, out checksumCalculatorMock, out metadataRepositoryMock);
+            
+            var multipartContent = new MultipartFormDataContent();
+            var binaryContent = Enumerable.Repeat(Enumerable.Range(14, 255).ToArray(), 20).SelectMany(x => x.Select(y => y)).Select(x=>(byte)x).ToArray();
+            var fileContent = new ByteArrayContent(binaryContent);
+            fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment") { FileName = "Test.txt" };
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("something/that_we_dont_expect");
+            multipartContent.Add(fileContent);
+            controller.Request.Content = multipartContent;
+
+            // Act
+            Task<IHttpActionResult> task = controller.Post();
+            task.Wait();
+
+            // Assert
+            GenericValueResult<List<MetadataInfo>> result = task.Result as GenericValueResult<List<MetadataInfo>>;
+            result.Should().NotBeNull("Wrong data type was returned from the controller");
+
+            var t = result.Value as IEnumerable<Models.MetadataInfo>;
+            t.Should().NotBeNull("Wrong data type was returned as a result of controller's work");
+
+            var informationFromService = t.First();
+            informationFromService.Id.Should().NotHaveValue();
+            informationFromService.ProcessingResult.Should().Be(UploadController.ContentTypeCannotBeAcceptedMessage);
+        }
+
         private UploadController ConfigureController(
             out Mock<IStorageRepository> storageRepositoryMock,
             out Mock<IFileProcessor> fileProcessorMock,
@@ -198,6 +232,7 @@ namespace DemoProject.API.Tests.Controllers
             var multipartContent = new MultipartFormDataContent();
             var fileContent = new ByteArrayContent(System.Text.Encoding.ASCII.GetBytes("line1\nline2 is long\nline3\n"));
             fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment") { FileName = "Test.txt" };
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain");
             multipartContent.Add(fileContent);
             request.Content = multipartContent;
 

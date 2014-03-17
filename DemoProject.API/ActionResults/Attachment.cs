@@ -15,6 +15,12 @@ namespace DemoProject.API.ActionResults
         private readonly string fileName;
         private readonly HttpRequestMessage request;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Attachment" /> class.
+        /// </summary>
+        /// <param name="stream">File's data</param>
+        /// <param name="fileName">Name of a file to set in ContentDisposition header</param>
+        /// <param name="request">Request, from which Response should be created</param>
         public Attachment(Stream stream, string fileName, HttpRequestMessage request)
         {
             this.stream = stream;

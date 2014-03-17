@@ -40,7 +40,7 @@ namespace DemoProject.API.Tests.Controllers
             results.Should().NotBeNull("Wrong data type was returned from the controller");
             results.Value.Count().Should().Be(queryableList.Count());
 
-            HashSet<int> receivedIds = new HashSet<int>(results.Value.Select(x => x.Id).AsEnumerable());
+            HashSet<int> receivedIds = new HashSet<int>(results.Value.Select(x => x.Id.Value).AsEnumerable());
             HashSet<int> expectedIds = new HashSet<int>(queryableList.Select(x => x.Id).AsEnumerable());
             expectedIds.Except(receivedIds).Count().Should().Be(0, "Result list should contain all the same IDs as the list in Repository");
 
