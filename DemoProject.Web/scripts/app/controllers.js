@@ -80,3 +80,9 @@ demoApp.controller("uploadController", ["$scope", "$upload", function ($scope, $
 
     };
 }]);
+
+
+$("#GetApiHelp").on("click", function () {
+    console.log("Open API help ");
+    window.open(configuration.apiUrl + "/Help", "_new");
+});
