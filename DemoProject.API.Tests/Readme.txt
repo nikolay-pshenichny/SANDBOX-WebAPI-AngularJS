@@ -1,1 +1,1 @@
-﻿This project contains tests for DemoProject.API classes.
+﻿Tests for DemoProject.API.

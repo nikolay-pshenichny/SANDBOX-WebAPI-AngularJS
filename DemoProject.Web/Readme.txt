@@ -1,3 +1,4 @@
-﻿This project contains UI code (AngularJs, Bootstrap, ...)
+﻿UI (AngularJs, Bootstrap, ...)
+
 ApiUrl configuration is in the /scripts/app/config.js
 

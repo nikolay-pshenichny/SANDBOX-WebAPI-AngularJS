@@ -1,1 +1,1 @@
-﻿This project contains the database model (EntityFramework, code first).
+﻿Database model (EntityFramework, code first).

@@ -1,1 +1,1 @@
-﻿This project contains all web services. see ./controllers/ for more information.
+﻿This project contains all web services. see http://localhost/api/help for more information.
