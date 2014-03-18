@@ -81,3 +81,4 @@ __NOTE:__ To get information about available endpoint visit [http://localhost/ap
 - Uploads validation
 - Progress bars to UI
 - Authorization
+
