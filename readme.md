@@ -76,7 +76,8 @@ __NOTE:__ To get information about available endpoint visit [http://localhost/ap
 
 
 ## TODO
-
+- TypeScript
+- MassTransit and at least one native windows service
 - Test API methods with improper input data
 - Uploads validation
 - Progress bars to UI
